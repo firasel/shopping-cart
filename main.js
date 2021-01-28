@@ -1,56 +1,71 @@
 //plus button functionality
-function plusButton(btnId, quantityId, priceShow, subTotalId, totalId) {
-    const btn = document.getElementById(btnId)
-    const quantity = document.getElementById(quantityId)
-    const price = document.getElementById(priceShow)
-    const subTotal = document.getElementById(subTotalId)
-    const total = document.getElementById(totalId)
-    btn.addEventListener('click', function () {
-        //quantity calculate
-        var currentQuantity = parseInt(quantity.value)
-        var updateQuantity = ++currentQuantity
-        quantity.value = updateQuantity
-        //price calculate
-        var fixedPrice = (parseFloat(price.innerText) / (--currentQuantity))
-        var updatePrice = fixedPrice * updateQuantity
-        price.textContent = updatePrice
-        //subtotal calculate
-        var currentSubTotal = parseFloat(subTotal.innerText)
-        var updateSubtotal = currentSubTotal + fixedPrice
-        subTotal.textContent = updateSubtotal
-        //total calculate
-        total.textContent = updateSubtotal
-    })
+function quantityButtons(btnId,quantityId) {
+    var quantity
+    var price
+    const subTotal = document.getElementById('subTotal')
+    const total = document.getElementById('total')
+    if(quantityId=='phone'){
+        quantity=document.getElementById(quantityId+'QuantityInput')
+        price=document.getElementById(quantityId+'PriceShow')
+    }else{
+        quantity=document.getElementById(quantityId+'QuantityInput')
+        price=document.getElementById(quantityId+'PriceShow')
+    }
+    calculatePrice(btnId, quantity, price, subTotal, total)
 }
-plusButton('phonePlusBtn', 'phoneQuantityInput', 'phonePriceShow', 'subTotal', 'total')
-plusButton('casingPlusBtn', 'casingQuantityInput', 'casingPriceShow', 'subTotal', 'total')
-//minus button functionality
-function minusButton(btnId, quantityId, priceShow, subTotalId, totalId) {
-    const btn = document.getElementById(btnId)
-    const quantity = document.getElementById(quantityId)
-    const price = document.getElementById(priceShow)
-    const subTotal = document.getElementById(subTotalId)
-    const total = document.getElementById(totalId)
-    btn.addEventListener('click', function () {
-        if (quantity.value > 1) {
+
+
+//quantity and price calculate
+function calculatePrice(btnId, quantity, price, subTotal, total) {
+    document.getElementById(btnId).addEventListener('click', function () {
+        var currentQuantity = parseInt(quantity.value)
+        var updateQuantity
+        var fixedPrice
+        var updatePrice
+        var currentSubTotal
+        var updateSubtotal
+        if (btnId == 'phonePlusBtn' || btnId == 'casingPlusBtn') {
             //quantity calculate
-            var currentQuantity = parseInt(quantity.value)
-            var updateQuantity = --currentQuantity
-            quantity.value = updateQuantity
-            //price calculate
-            var fixedPrice = (parseFloat(price.innerText) / (++currentQuantity))
-            price.textContent = (updateQuantity * fixedPrice)
+            updateQuantity = ++currentQuantity
+            //product price calculate
+            fixedPrice = (parseFloat(price.innerText) / (--currentQuantity))
+            updatePrice = fixedPrice * updateQuantity
             //subtotal calculate
-            var currentSubTotal = parseFloat(subTotal.innerText)
-            var updateSubtotal = currentSubTotal - fixedPrice
+            currentSubTotal = parseFloat(subTotal.innerText)
+            updateSubtotal = currentSubTotal + fixedPrice
+        } else {
+            if (quantity.value > 1) {
+                //quantity calculate
+                updateQuantity = --currentQuantity
+                //product price calculate
+                fixedPrice = (parseFloat(price.innerText) / (++currentQuantity))
+                updatePrice = fixedPrice * updateQuantity
+                //subtotal calculate
+                currentSubTotal = parseFloat(subTotal.innerText)
+                updateSubtotal = currentSubTotal - fixedPrice
+            }
+        }
+        //check any change then update
+        if (updateQuantity > 0) {
+            //quantity update
+            quantity.value = updateQuantity
+            //update price
+            price.textContent = updatePrice
+            //update subtotal
             subTotal.textContent = updateSubtotal
-            //total calculate
+            //update total
             total.textContent = updateSubtotal
+        }else{
+            alert('quantity is not possible zero')
         }
     })
 }
-minusButton('phoneMinusBtn', 'phoneQuantityInput', 'phonePriceShow', 'subTotal', 'total')
-minusButton('casingMinusBtn', 'casingQuantityInput', 'casingPriceShow', 'subTotal', 'total')
+quantityButtons('phonePlusBtn', 'phone')
+quantityButtons('casingPlusBtn', 'casing')
+quantityButtons('phoneMinusBtn', 'phone')
+quantityButtons('casingMinusBtn', 'casing')
+
+
 //remove button functionality
 function removeButton(btnId, areaId, subTotalId, totalId) {
     const removeBtn = document.getElementById(btnId)
