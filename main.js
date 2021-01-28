@@ -4,6 +4,7 @@ function quantityButtons(btnId,quantityId) {
     var price
     const subTotal = document.getElementById('subTotal')
     const total = document.getElementById('total')
+    const tax = document.getElementById('tax')
     if(quantityId=='phone'){
         quantity=document.getElementById(quantityId+'QuantityInput')
         price=document.getElementById(quantityId+'PriceShow')
@@ -11,12 +12,12 @@ function quantityButtons(btnId,quantityId) {
         quantity=document.getElementById(quantityId+'QuantityInput')
         price=document.getElementById(quantityId+'PriceShow')
     }
-    calculatePrice(btnId, quantity, price, subTotal, total)
+    calculatePrice(btnId, quantity, price, subTotal, total,tax)
 }
 
 
 //quantity and price calculate
-function calculatePrice(btnId, quantity, price, subTotal, total) {
+function calculatePrice(btnId, quantity, price, subTotal, total,tax) {
     document.getElementById(btnId).addEventListener('click', function () {
         var currentQuantity = parseInt(quantity.value)
         var updateQuantity
@@ -24,6 +25,8 @@ function calculatePrice(btnId, quantity, price, subTotal, total) {
         var updatePrice
         var currentSubTotal
         var updateSubtotal
+        var updateTax
+        var updateTotal
         if (btnId == 'phonePlusBtn' || btnId == 'casingPlusBtn') {
             //quantity calculate
             updateQuantity = ++currentQuantity
@@ -33,6 +36,8 @@ function calculatePrice(btnId, quantity, price, subTotal, total) {
             //subtotal calculate
             currentSubTotal = parseFloat(subTotal.innerText)
             updateSubtotal = currentSubTotal + fixedPrice
+            updateTax=parseFloat((updateSubtotal*0.1).toFixed(2))
+            updateTotal=updateSubtotal+updateTax
         } else {
             if (quantity.value > 1) {
                 //quantity calculate
@@ -43,6 +48,8 @@ function calculatePrice(btnId, quantity, price, subTotal, total) {
                 //subtotal calculate
                 currentSubTotal = parseFloat(subTotal.innerText)
                 updateSubtotal = currentSubTotal - fixedPrice
+                updateTax=parseFloat((updateSubtotal*0.1).toFixed(2))
+                updateTotal=updateSubtotal+updateTax
             }
         }
         //check any change then update
@@ -53,8 +60,10 @@ function calculatePrice(btnId, quantity, price, subTotal, total) {
             price.textContent = updatePrice
             //update subtotal
             subTotal.textContent = updateSubtotal
+            //update tax
+            tax.textContent=updateTax
             //update total
-            total.textContent = updateSubtotal
+            total.textContent = updateTotal
         }else{
             alert('quantity is not possible zero')
         }
@@ -67,21 +76,27 @@ quantityButtons('casingMinusBtn', 'casing')
 
 
 //remove button functionality
-function removeButton(btnId, areaId, subTotalId, totalId) {
+function removeButton(btnId, areaId) {
     const removeBtn = document.getElementById(btnId)
     const area = document.getElementById(areaId)
-    const subTotal = document.getElementById(subTotalId)
-    const total = document.getElementById(totalId)
+    const subTotal = document.getElementById('subTotal')
+    const tax = document.getElementById('tax')
+    const total = document.getElementById('total')
     removeBtn.addEventListener('click', function (events) {
         var minusPrice = parseFloat(events.target.previousElementSibling.firstElementChild.innerText)
         //subtotal calculate
         var currentSubTotal = parseFloat(subTotal.innerText)
         var updateSubtotal = currentSubTotal - minusPrice
         subTotal.textContent = updateSubtotal
+        //tax calculate
+        var oldTax=parseFloat(tax.innerText)
+        var updateTax=parseFloat((updateSubtotal*0.1).toFixed(2))
+        tax.textContent=updateTax
         //total calculate
-        total.textContent = updateSubtotal
+        total.textContent = updateSubtotal+updateTax
+        //remove this element
         area.remove();
     })
 }
-removeButton('phoneRmvBtn', 'phoneArea', 'subTotal', 'total')
-removeButton('casingRmvBtn', 'casingArea', 'subTotal', 'total')
+removeButton('phoneRmvBtn', 'phoneArea')
+removeButton('casingRmvBtn', 'casingArea')
